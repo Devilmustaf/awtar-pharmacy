@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيدلية اوتار</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .swiper-button-next, .swiper-button-prev {
+            color: #059669 !important;
+            background: rgba(255,255,255,0.9);
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .swiper-button-next::after, .swiper-button-prev::after {
+            font-size: 16px !important;
+            font-weight: bold;
+        }
+        .swiper-pagination-bullet-active {
+            background: #059669 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-emerald-600 text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Brand Info -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchTab('shop')">
+                <div class="bg-white p-2 rounded-xl text-emerald-600 shadow">
+                    <i class="fa-solid fa-prescription-bottle-medical text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wide">صيدلية اوتار</h1>
+                    <p class="text-xs text-emerald-100 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-amber-300"></i> تكريت - شارع الاربعين - مقابل شركة اسيا سيل
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <button onclick="switchTab('shop')" class="hover:bg-emerald-700 px-3 py-2 rounded-lg transition text-sm font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-store"></i> المتجر
+                </button>
+                <button onclick="openAdminAuthModal()" class="hover:bg-emerald-700 px-3 py-2 rounded-lg transition text-sm font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-user-lock"></i> <span id="admin-btn-text">لوحة الأدمن</span>
+                </button>
+                <button onclick="toggleCart()" class="relative bg-emerald-700 hover:bg-emerald-800 px-3.5 py-2 rounded-lg transition">
+                    <i class="fa-solid fa-cart-shopping text-base"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-emerald-600">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 py-6 flex-grow">
+
+        <!-- ================= PAGE: SHOP ================= -->
+        <div id="page-shop" class="space-y-8">
+            
+            <!-- Hero Banner -->
+            <section class="bg-gradient-to-r from-emerald-800 to-emerald-600 text-white rounded-2xl p-6 md:p-8 shadow-lg text-center relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl mx-auto space-y-3">
+                    <h2 class="text-2xl md:text-3xl font-extrabold">مرحباً بكم في صيدلية اوتار</h2>
+                    <p class="text-emerald-100 text-sm md:text-base">خدمتكم غايتنا - تكريت شارع الاربعين مقابل شركة اسيا سيل</p>
+                    
+                    <!-- Smart Search Bar -->
+                    <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-magnifying-glass absolute right-4 top-3.5 text-gray-400"></i>
+                            <input type="text" id="search-input" oninput="filterMedicines()" 
+                                placeholder="ابحث باسم العلاج أو الفئة..." 
+                                class="w-full pr-11 pl-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow text-sm">
+                        </div>
+                        <select id="category-filter" onchange="filterMedicines()" class="px-4 py-3 rounded-xl text-gray-800 focus:outline-none shadow bg-white cursor-pointer text-sm font-semibold">
+                            <option value="ALL">جميع الفئات</option>
+                            <option value="مسكنات">مسكنات</option>
+                            <option value="مضادات حيوية">مضادات حيوية</option>
+                            <option value="فيتامينات">فيتامينات ومكملات</option>
+                            <option value="عناية بشرة">عناية بالبشرة</option>
+                            <option value="مستلزمات طبية">مستلزمات طبية</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Newly Added Slider Section -->
+            <section id="newly-added-section" class="space-y-4">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-sparkles text-amber-500"></i> وصل حديثاً
+                    </h3>
+                </div>
+                
+                <!-- Swiper Container -->
+                <div id="slider-wrapper">
+                    <div class="swiper mySwiper py-2">
+                        <div id="slider-content" class="swiper-wrapper">
+                            <!-- Dynamic Slides -->
+                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+
+                <div id="slider-empty" class="hidden text-center py-6 bg-white rounded-xl border border-dashed border-gray-300 text-gray-400 text-sm">
+                    لا توجد منتجات مضافة حديثاً حتى الآن.
+                </div>
+            </section>
+
+            <!-- All Medicines Grid -->
+            <section class="space-y-4">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-pills text-emerald-600"></i> جميع المنتجات والأدوية
+                    </h3>
+                </div>
+                
+                <div id="all-medicines-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Dynamic Grid Items -->
+                </div>
+
+                <div id="no-results" class="hidden text-center py-12 bg-white rounded-xl border border-gray-100 shadow-sm text-gray-500">
+                    <i class="fa-solid fa-box-open text-4xl mb-3 text-emerald-300"></i>
+                    <p class="font-bold">الصيدلية فارغة أو لم يتم العثور على نتائج!</p>
+                    <p class="text-xs text-gray-400 mt-1">يمكن للأدمن إضافة المنتجات والأدوية من لوحة التحكم.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= PAGE: ADMIN ================= -->
+        <div id="page-admin" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-emerald-600"></i> لوحة تحكم صيدلية اوتار
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-1">إدارة الأدوية، الصور، الأسعار بالدينار العراقي واستقبال الطلبات عبر Firebase</p>
+                </div>
+                <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-bold border border-red-200 transition self-start md:self-auto">
+                    <i class="fa-solid fa-right-from-bracket ml-1"></i> تسجيل الخروج
+                </button>
+            </div>
+
+            <!-- Admin Sub-Navigation -->
+            <div class="flex gap-4 border-b">
+                <button id="btn-tab-add" onclick="switchAdminSubTab('add')" class="pb-2 px-4 font-bold border-b-2 border-emerald-600 text-emerald-600 transition">
+                    <i class="fa-solid fa-plus-circle ml-1"></i> إضافة / تعديل منتج
+                </button>
+                <button id="btn-tab-manage" onclick="switchAdminSubTab('manage')" class="pb-2 px-4 font-bold text-gray-500 hover:text-emerald-600 transition">
+                    <i class="fa-solid fa-list-check ml-1"></i> إدارة الأدوية المخزونة
+                </button>
+                <button id="btn-tab-orders" onclick="switchAdminSubTab('orders')" class="pb-2 px-4 font-bold text-gray-500 hover:text-emerald-600 transition relative">
+                    <i class="fa-solid fa-truck-ramp-box ml-1"></i> الطلبات الواردة
+                    <span id="orders-badge" class="hidden bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full mr-1">0</span>
+                </button>
+            </div>
+
+            <!-- Sub-Tab 1: Add / Edit Form -->
+            <div id="admin-sub-add" class="max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                <h3 id="form-title" class="text-base font-bold text-gray-800 border-b pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-capsules text-emerald-600"></i> إضافة علاج جديد
+                </h3>
+
+                <form id="medicine-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <input type="hidden" id="edit-med-id" value="">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold mb-1 text-gray-700">اسم العلاج / المنتج <span class="text-red-500">*</span></label>
+                            <input type="text" id="med-name" required placeholder="مثال: باراسيتامول سامراء" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1 text-gray-700">السعر (بالدينار العراقي د.ع) <span class="text-red-500">*</span></label>
+                            <input type="number" id="med-price" min="250" step="250" required placeholder="مثال: 2500" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold mb-1 text-gray-700">الفئة <span class="text-red-500">*</span></label>
+                            <select id="med-category" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                <option value="مسكنات">مسكنات</option>
+                                <option value="مضادات حيوية">مضادات حيوية</option>
+                                <option value="فيتامينات">فيتامينات ومكملات</option>
+                                <option value="عناية بشرة">عناية بالبشرة</option>
+                                <option value="مستلزمات طبية">مستلزمات طبية</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1 text-gray-700">صورة العلاج <span class="text-red-500">*</span></label>
+                            <input type="file" id="med-image" accept="image/*" onchange="previewImage(event)" class="w-full text-xs text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold mb-1 text-gray-700">وصف قصير / طريقة الاستخدام</label>
+                        <textarea id="med-desc" rows="2" placeholder="أدخل تفاصيل الجرعة أو دواعي الاستعمال..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" class="hidden">
+                        <p class="text-xs font-bold text-gray-600 mb-1">معاينة الصورة:</p>
+                        <img id="image-preview" class="h-28 w-28 object-cover rounded-lg border">
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button type="submit" id="submit-btn" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow transition text-sm">
+                            <i class="fa-solid fa-floppy-disk ml-1"></i> حفظ المنتج
+                        </button>
+                        <button type="button" id="cancel-edit-btn" onclick="resetForm()" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold px-4 py-2.5 rounded-lg transition text-sm">
+                            إلغاء التعديل
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sub-Tab 2: Manage Inventory -->
+            <div id="admin-sub-manage" class="hidden space-y-4">
+                <h3 class="text-base font-bold text-gray-800">الأدوية المتاحة حالياً (<span id="med-count">0</span>)</h3>
+                <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
+                    <table class="w-full text-right border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 text-xs border-b">
+                                <th class="p-3">الصورة</th>
+                                <th class="p-3">اسم العلاج</th>
+                                <th class="p-3">الفئة</th>
+                                <th class="p-3">السعر</th>
+                                <th class="p-3 text-center">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body" class="divide-y text-xs md:text-sm">
+                            <!-- Dynamic Render -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sub-Tab 3: Manage Orders -->
+            <div id="admin-sub-orders" class="hidden space-y-4">
+                <h3 class="text-base font-bold text-gray-800">قائمة الطلبات المستلمة</h3>
+                <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
+                    <table class="w-full text-right border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 text-xs border-b">
+                                <th class="p-3">رقم الطلب</th>
+                                <th class="p-3">اسم الزبون</th>
+                                <th class="p-3">الهاتف</th>
+                                <th class="p-3">العنوان</th>
+                                <th class="p-3">الأدوية</th>
+                                <th class="p-3">المجموع</th>
+                                <th class="p-3">الحالة</th>
+                                <th class="p-3 text-center">تحديث الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body" class="divide-y text-xs md:text-sm">
+                            <!-- Dynamic Render -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Admin Authentication Modal -->
+    <div id="admin-auth-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 text-center relative">
+            <button onclick="closeAdminAuthModal()" class="absolute top-3 left-3 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">تسجيل الدخول لوحة الأدمن</h3>
+            <p class="text-xs text-gray-500">أدخل الرمز السري المخصص لإدارة صيدلية اوتار</p>
+            
+            <div>
+                <input type="password" id="admin-pin-input" placeholder="أدخل الرقم السري" class="w-full border text-center text-lg tracking-widest font-mono py-2.5 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                <p id="pin-error" class="text-xs text-red-500 mt-1 hidden">الرمز السري غير صحيح!</p>
+            </div>
+
+            <button onclick="verifyAdminPin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition text-sm">
+                دخول
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Drawer Modal -->
+    <div id="cart-drawer" class="fixed inset-0 bg-black/50 z-50 hidden flex justify-end transition-opacity">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col p-4 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-emerald-600"></i> سلة العلاجات</h3>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cart-items-container" class="flex-grow overflow-y-auto space-y-3">
+                <!-- Dynamic Render -->
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="border-t pt-4 space-y-3">
+                <div class="flex justify-between text-base font-bold">
+                    <span>المجموع الكلي:</span>
+                    <span id="cart-total" class="text-emerald-600">0 د.ع</span>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="space-y-2 pt-2 border-t">
+                    <input type="text" id="cust-name" placeholder="الاسم الكامل للزبون" class="w-full border p-2 text-xs rounded-lg outline-none focus:border-emerald-500">
+                    <input type="tel" id="cust-phone" placeholder="رقم الهاتف (مثال: 0770xxxxxxx)" class="w-full border p-2 text-xs rounded-lg outline-none focus:border-emerald-500">
+                    <textarea id="cust-address" rows="2" placeholder="العنوان التفصيلي في تكريت أو المناطق المجاورة" class="w-full border p-2 text-xs rounded-lg outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <button onclick="submitOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-paper-plane"></i> إرسال الطلب للصيدلية
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Firebase SDK v10 Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            updateDoc, 
+            deleteDoc, 
+            doc, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // إعدادات تطبيق awtar-pharmacy
+        const firebaseConfig = {
+            apiKey: "AIzaSyCPTxVKvXhBOHKN5dt9eLW-3z47c7MMjn0",
+            authDomain: "awtar-pharmacy.firebaseapp.com",
+            projectId: "awtar-pharmacy",
+            storageBucket: "awtar-pharmacy.firebasestorage.app",
+            messagingSenderId: "228093307450",
+            appId: "1:228093307450:web:11e4d411bf7987aee22303",
+            measurementId: "G-4X9MJHLG03"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 1. الاستماع اللحظي لتغييرات منتجات الأدوية
+        const productsCol = collection(db, "products");
+        onSnapshot(productsCol, (snapshot) => {
+            window.medicines = [];
+            snapshot.forEach((docItem) => {
+                window.medicines.push({ id: docItem.id, ...docItem.data() });
+            });
+            window.renderShop();
+            if (!document.getElementById('page-admin').classList.contains('hidden')) {
+                window.renderInventoryTable();
+            }
+        });
+
+        // 2. الاستماع اللحظي للطلبات الواردة
+        const ordersCol = collection(db, "orders");
+        onSnapshot(ordersCol, (snapshot) => {
+            window.orders = [];
+            snapshot.forEach((docItem) => {
+                window.orders.push({ id: docItem.id, ...docItem.data() });
+            });
+            if (!document.getElementById('page-admin').classList.contains('hidden')) {
+                window.renderOrdersTable();
+            }
+        });
+
+        // 3. تصدير عمليات قواعد البيانات لنطاق النافذة العامة (Window)
+        window.saveMedicineToFirebase = async function(medData, editId) {
+            try {
+                if (editId) {
+                    const docRef = doc(db, "products", editId);
+                    await updateDoc(docRef, medData);
+                    alert('تم تعديل بيانات العلاج بنجاح!');
+                } else {
+                    await addDoc(productsCol, {
+                        ...medData,
+                        addedAt: Date.now()
+                    });
+                    alert('تم إضافة المنتج بنجاح إلى قاعدة البيانات السحابية!');
+                }
+            } catch (e) {
+                console.error("خطأ في حفظ المنتج: ", e);
+                alert("حدث خطأ أثناء الاتصال بالخادم!");
+            }
+        };
+
+        window.deleteMedicineFromFirebase = async function(id) {
+            try {
+                await deleteDoc(doc(db, "products", id));
+                alert('تم حذف المنتج بنجاح!');
+            } catch (e) {
+                console.error("خطأ أثناء الحذف: ", e);
+            }
+        };
+
+        window.sendOrderToFirebase = async function(orderData) {
+            try {
+                await addDoc(ordersCol, {
+                    ...orderData,
+                    status: 'قيد المعالجة',
+                    createdAt: new Date().toLocaleString('ar-IQ')
+                });
+                alert('تم إرسال طلبك بنجاح إلى صيدلية اوتار! وسيتم التواصل معك للتجهيز.');
+            } catch (e) {
+                console.error("خطأ في إرسال الطلب: ", e);
+                alert("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة لاحقاً.");
+            }
+        };
+
+        window.updateOrderStatusInFirebase = async function(orderId, newStatus) {
+            try {
+                const docRef = doc(db, "orders", orderId);
+                await updateDoc(docRef, { status: newStatus });
+            } catch (e) {
+                console.error("خطأ في تحديث الحالة: ", e);
+            }
+        };
+    </script>
+
+    <!-- Application Script -->
+    <script>
+        const PIN_CODE = "723778";
+
+        // Global State Controlled by Firestore
+        window.medicines = [];
+        window.orders = [];
+        let cart = JSON.parse(localStorage.getItem('awtar_cart')) || [];
+        let isAdminLoggedIn = sessionStorage.getItem('awtar_admin_logged') === 'true';
+        let currentUploadedImageBase64 = "";
+        let swiperInstance = null;
+
+        // Currency Formatter
+        function formatIQD(amount) {
+            return new Intl.NumberFormat('ar-IQ').format(amount) + ' د.ع';
+        }
+
+        function saveCartLocal() {
+            localStorage.setItem('awtar_cart', JSON.stringify(cart));
+        }
+
+        // Navigation
+        function switchTab(tab) {
+            if (tab === 'admin' && !isAdminLoggedIn) {
+                openAdminAuthModal();
+                return;
+            }
+            document.getElementById('page-shop').classList.toggle('hidden', tab !== 'shop');
+            document.getElementById('page-admin').classList.toggle('hidden', tab !== 'admin');
+            if (tab === 'shop') renderShop();
+            if (tab === 'admin') renderAdminViews();
+        }
+
+        function switchAdminSubTab(subTab) {
+            document.getElementById('admin-sub-add').classList.toggle('hidden', subTab !== 'add');
+            document.getElementById('admin-sub-manage').classList.toggle('hidden', subTab !== 'manage');
+            document.getElementById('admin-sub-orders').classList.toggle('hidden', subTab !== 'orders');
+
+            const activeClass = "pb-2 px-4 font-bold border-b-2 border-emerald-600 text-emerald-600 transition";
+            const inactiveClass = "pb-2 px-4 font-bold text-gray-500 hover:text-emerald-600 transition";
+
+            document.getElementById('btn-tab-add').className = subTab === 'add' ? activeClass : inactiveClass;
+            document.getElementById('btn-tab-manage').className = subTab === 'manage' ? activeClass : inactiveClass;
+            document.getElementById('btn-tab-orders').className = subTab === 'orders' ? activeClass : inactiveClass;
+
+            if (subTab === 'manage') renderInventoryTable();
+            if (subTab === 'orders') renderOrdersTable();
+        }
+
+        // Admin Auth
+        function openAdminAuthModal() {
+            if (isAdminLoggedIn) {
+                switchTab('admin');
+            } else {
+                document.getElementById('admin-auth-modal').classList.remove('hidden');
+                document.getElementById('admin-pin-input').focus();
+            }
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById('admin-auth-modal').classList.add('hidden');
+            document.getElementById('pin-error').classList.add('hidden');
+            document.getElementById('admin-pin-input').value = '';
+        }
+
+        function verifyAdminPin() {
+            const input = document.getElementById('admin-pin-input').value.trim();
+            if (input === PIN_CODE) {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('awtar_admin_logged', 'true');
+                closeAdminAuthModal();
+                document.getElementById('admin-btn-text').innerText = 'لوحة الأدمن (مفعل)';
+                switchTab('admin');
+            } else {
+                document.getElementById('pin-error').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('awtar_admin_logged');
+            document.getElementById('admin-btn-text').innerText = 'لوحة الأدمن';
+            switchTab('shop');
+        }
+
+        // Image Handling
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUploadedImageBase64 = e.target.result;
+                    document.getElementById('image-preview').src = currentUploadedImageBase64;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Form Submit
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('edit-med-id').value;
+            const name = document.getElementById('med-name').value.trim();
+            const price = parseFloat(document.getElementById('med-price').value);
+            const category = document.getElementById('med-category').value;
+            const desc = document.getElementById('med-desc').value.trim();
+
+            const medData = {
+                name,
+                price,
+                category,
+                desc
+            };
+
+            if (currentUploadedImageBase64) {
+                medData.image = currentUploadedImageBase64;
+            }
+
+            if (!editId && !currentUploadedImageBase64) {
+                alert('يرجى اختيار صورة للعلاج!');
+                return;
+            }
+
+            await window.saveMedicineToFirebase(medData, editId);
+            resetForm();
+            switchTab('shop');
+        }
+
+        function startEditMedicine(id) {
+            const med = window.medicines.find(m => m.id === id);
+            if (!med) return;
+
+            document.getElementById('edit-med-id').value = med.id;
+            document.getElementById('med-name').value = med.name;
+            document.getElementById('med-price').value = med.price;
+            document.getElementById('med-category').value = med.category;
+            document.getElementById('med-desc').value = med.desc || '';
+            document.getElementById('med-image').required = false;
+
+            if (med.image) {
+                document.getElementById('image-preview').src = med.image;
+                document.getElementById('image-preview-container').classList.remove('hidden');
+            }
+
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-emerald-600"></i> تعديل بيانات العلاج';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-check ml-1"></i> حفظ التعديلات';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+            switchAdminSubTab('add');
+        }
+
+        function resetForm() {
+            document.getElementById('medicine-form').reset();
+            document.getElementById('edit-med-id').value = '';
+            document.getElementById('med-image').required = true;
+            document.getElementById('image-preview-container').classList.add('hidden');
+            currentUploadedImageBase64 = '';
+
+            document.getElementById('form-title').innerHTML = '<i class="fa-solid fa-capsules text-emerald-600"></i> إضافة علاج جديد';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-floppy-disk ml-1"></i> حفظ المنتج';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        }
+
+        function deleteMedicine(id) {
+            if (confirm('هل أنت تأكد من حذف هذا المنتج نهائياً من الصيدلية؟')) {
+                window.deleteMedicineFromFirebase(id);
+            }
+        }
+
+        // Render Shop View
+        function renderShop() {
+            renderNewlyAddedSlider();
+            filterMedicines();
+            updateCartUI();
+        }
+
+        function renderNewlyAddedSlider() {
+            const sliderContent = document.getElementById('slider-content');
+            const sliderWrapper = document.getElementById('slider-wrapper');
+            const sliderEmpty = document.getElementById('slider-empty');
+
+            sliderContent.innerHTML = '';
+
+            const sorted = [...window.medicines].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+            const newest = sorted.slice(0, 8);
+
+            if (newest.length === 0) {
+                sliderWrapper.classList.add('hidden');
+                sliderEmpty.classList.remove('hidden');
+                return;
+            }
+
+            sliderWrapper.classList.remove('hidden');
+            sliderEmpty.classList.add('hidden');
+
+            newest.forEach(med => {
+                const slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between h-full relative">
+                        <span class="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">جديد</span>
+                        <img src="${med.image || 'https://via.placeholder.com/150'}" alt="${med.name}" class="h-36 w-full object-cover">
+                        <div class="p-3 flex-grow flex flex-col justify-between space-y-2">
+                            <div>
+                                <span class="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded font-bold">${med.category}</span>
+                                <h4 class="font-bold text-gray-800 text-sm mt-1 line-clamp-1">${med.name}</h4>
+                            </div>
+                            <div class="pt-2 border-t flex justify-between items-center">
+                                <span class="text-xs font-bold text-emerald-700">${formatIQD(med.price)}</span>
+                                <button onclick="addToCart('${med.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold transition">
+                                    + إضافة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                sliderContent.appendChild(slide);
+            });
+
+            if (swiperInstance) swiperInstance.destroy(true, true);
+            swiperInstance = new Swiper('.mySwiper', {
+                slidesPerView: 1,
+                spaceBetween: 15,
+                autoplay: { delay: 3500, disableOnInteraction: false },
+                pagination: { el: '.swiper-pagination', clickable: true },
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                breakpoints: {
+                    640: { slidesPerView: 2 },
+                    768: { slidesPerView: 3 },
+                    1024: { slidesPerView: 4 }
+                }
+            });
+        }
+
+        function filterMedicines() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const category = document.getElementById('category-filter').value;
+
+            const filtered = window.medicines.filter(med => {
+                const matchesSearch = med.name.toLowerCase().includes(query) || 
+                                     (med.desc && med.desc.toLowerCase().includes(query)) ||
+                                     med.category.toLowerCase().includes(query);
+                const matchesCategory = category === 'ALL' || med.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            const grid = document.getElementById('all-medicines-grid');
+            const noResults = document.getElementById('no-results');
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filtered.forEach(med => {
+                    grid.appendChild(createMedCard(med));
+                });
+            }
+        }
+
+        function createMedCard(med) {
+            const div = document.createElement('div');
+            div.className = "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col justify-between overflow-hidden";
+            div.innerHTML = `
+                <img src="${med.image || 'https://via.placeholder.com/150'}" alt="${med.name}" class="h-44 w-full object-cover">
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                    <div>
+                        <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">${med.category}</span>
+                        <h4 class="font-bold text-gray-800 mt-1 leading-snug">${med.name}</h4>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${med.desc || 'لا يوجد وصف مضاف.'}</p>
+                    </div>
+                    <div class="pt-2 border-t flex justify-between items-center">
+                        <span class="text-sm font-bold text-emerald-700">${formatIQD(med.price)}</span>
+                        <button onclick="addToCart('${med.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // Cart Drawer & Actions
+        function toggleCart() {
+            document.getElementById('cart-drawer').classList.toggle('hidden');
+        }
+
+        function addToCart(id) {
+            const med = window.medicines.find(m => m.id === id);
+            if (!med) return;
+
+            const existItem = cart.find(item => item.id === id);
+            if (existItem) {
+                existItem.qty++;
+            } else {
+                cart.push({ ...med, qty: 1 });
+            }
+
+            saveCartLocal();
+            updateCartUI();
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            saveCartLocal();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const countEl = document.getElementById('cart-count');
+            const totalEl = document.getElementById('cart-total');
+
+            container.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-gray-400">
+                        <i class="fa-solid fa-basket-shopping text-3xl mb-2"></i>
+                        <p class="text-xs font-bold">سلة الشراء فارغة</p>
+                    </div>
+                `;
+            } else {
+                cart.forEach(item => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between border-b pb-2.5";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image || 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-lg object-cover border">
+                            <div>
+                                <h5 class="font-bold text-xs text-gray-800">${item.name}</h5>
+                                <p class="text-[11px] text-emerald-600 font-bold">${formatIQD(item.price)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQty('${item.id}', -1)" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded font-bold text-xs">-</button>
+                            <span class="text-xs font-bold">${item.qty}</span>
+                            <button onclick="updateQty('${item.id}', 1)" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded font-bold text-xs">+</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            countEl.innerText = count;
+            totalEl.innerText = formatIQD(total);
+        }
+
+        async function submitOrder() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            if (cart.length === 0) {
+                alert('السلة فارغة!');
+                return;
+            }
+
+            if (!name || !phone || !address) {
+                alert('يرجى ملء كافة معلومات الزبون والعنوان قبل إرسال الطلب.');
+                return;
+            }
+
+            const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+
+            const orderData = {
+                orderCode: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                customer: { name, phone, address },
+                items: [...cart],
+                total: total
+            };
+
+            await window.sendOrderToFirebase(orderData);
+
+            cart = [];
+            saveCartLocal();
+            updateCartUI();
+            toggleCart();
+
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-phone').value = '';
+            document.getElementById('cust-address').value = '';
+        }
+
+        // Render Admin Views
+        function renderAdminViews() {
+            renderInventoryTable();
+            renderOrdersTable();
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            document.getElementById('med-count').innerText = window.medicines.length;
+            tbody.innerHTML = '';
+
+            if (window.medicines.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-gray-400">لا توجد أدوية مضافة حالياً. قم بإضافة علاج جديد.</td></tr>';
+                return;
+            }
+
+            window.medicines.forEach(med => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-2.5"><img src="${med.image || 'https://via.placeholder.com/150'}" class="w-10 h-10 rounded-lg object-cover border"></td>
+                    <td class="p-2.5 font-bold text-gray-800">${med.name}</td>
+                    <td class="p-2.5"><span class="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded">${med.category}</span></td>
+                    <td class="p-2.5 font-bold text-emerald-600">${formatIQD(med.price)}</td>
+                    <td class="p-2.5 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="startEditMedicine('${med.id}')" class="bg-amber-50 hover:bg-amber-100 text-amber-600 px-2.5 py-1 rounded text-xs font-bold border border-amber-200">
+                                <i class="fa-solid fa-pen"></i> تعديل
+                            </button>
+                            <button onclick="deleteMedicine('${med.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded text-xs font-bold border border-red-200">
+                                <i class="fa-solid fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-table-body');
+            const badge = document.getElementById('orders-badge');
+            tbody.innerHTML = '';
+
+            if (window.orders.length > 0) {
+                badge.innerText = window.orders.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            if (window.orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">لا توجد طلبات واردة حالياً.</td></tr>';
+                return;
+            }
+
+            window.orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 border-b";
+
+                const itemsSummary = (order.items || []).map(i => `${i.name} (x${i.qty})`).join(', ');
+
+                let statusBadgeColor = 'bg-yellow-100 text-yellow-800';
+                if (order.status === 'تم التجهيز') statusBadgeColor = 'bg-blue-100 text-blue-800';
+                if (order.status === 'تم الإرسال') statusBadgeColor = 'bg-green-100 text-green-800';
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-xs">${order.orderCode || order.id}</td>
+                    <td class="p-3 font-bold">${order.customer?.name || 'غير معروف'}</td>
+                    <td class="p-3 font-mono dir-ltr text-right">${order.customer?.phone || '-'}</td>
+                    <td class="p-3 text-xs">${order.customer?.address || '-'}</td>
+                    <td class="p-3 text-xs max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
+                    <td class="p-3 font-bold text-emerald-600">${formatIQD(order.total || 0)}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusBadgeColor}">${order.status}</span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <select onchange="changeOrderStatus('${order.id}', this.value)" class="text-xs border rounded p-1 outline-none font-bold">
+                            <option value="قيد المعالجة" ${order.status === 'قيد المعالجة' ? 'selected' : ''}>قيد المعالجة</option>
+                            <option value="تم التجهيز" ${order.status === 'تم التجهيز' ? 'selected' : ''}>تم التجهيز</option>
+                            <option value="تم الإرسال" ${order.status === 'تم الإرسال' ? 'selected' : ''}>تم الإرسال</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function changeOrderStatus(orderId, newStatus) {
+            window.updateOrderStatusInFirebase(orderId, newStatus);
+        }
+
+        // Initialize App
+        renderShop();
+    </script>
+</body>
+</html>
