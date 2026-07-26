@@ -448,15 +448,15 @@
         });
 
         // Instant Encrypted Cache Load
-        const cachedMeds = localStorage.getItem('awtar_cached_medicines');
-        if (cachedMeds) {
-            try {
-                window.medicines = JSON.parse(atob(cachedMeds));
-                window.renderShop();
-            } catch(e) {
-                console.error("Cache reading error", e);
-            }
-        }
+const cachedMeds = localStorage.getItem('awtar_cached_medicines');
+if (cachedMeds) {
+    try {
+        window.medicines = JSON.parse(decodeURIComponent(escape(atob(cachedMeds))));
+        window.renderShop();
+    } catch(e) {
+        console.error("Cache reading error", e);
+    }
+}
 
         // Products Realtime Listener
         const productsCol = collection(db, "products");
@@ -466,7 +466,7 @@
                 window.medicines.push({ id: docItem.id, ...docItem.data() });
             });
             
-            localStorage.setItem('awtar_cached_medicines', btoa(JSON.stringify(window.medicines)));
+            localStorage.setItem('awtar_cached_medicines', btoa(unescape(encodeURIComponent(JSON.stringify(window.medicines)))));
 
             window.renderShop();
             if (!document.getElementById('page-admin').classList.contains('hidden')) {
