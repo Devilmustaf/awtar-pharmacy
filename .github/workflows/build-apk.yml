@@ -1,0 +1,84 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prepare web files & Capacitor
+        run: |
+          mkdir -p www
+          # نسخ جميع ملفات المشروع إلى مجلد الويب
+          cp -r index.html logo.png www/ 2>/dev/null || true
+          if [ -d "public" ]; then cp -r public/* www/ ; fi
+          
+          npm init -y
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/assets --save-dev
+          
+          # إنشاء إعدادات Capacitor بدون توجيه لموقع خارجي
+          cat <<EOF > capacitor.config.json
+          {
+            "appId": "com.awtar.pharmacy",
+            "appName": "Awtar Pharmacy",
+            "webDir": "www"
+          }
+          EOF
+
+          npx cap add android || true
+
+      # إضافة أذونات الكاميرا إلى AndroidManifest.xml
+      - name: Inject Camera Permissions
+        run: |
+          MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST_PATH" ]; then
+            sed -i '/<\/manifest>/i \    <uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />' $MANIFEST_PATH
+          fi
+
+      - name: Generate App Icons & Splash Screen
+        run: |
+          if [ -f "logo.png" ]; then
+            mkdir -p assets
+            cp logo.png assets/icon-only.png
+            cp logo.png assets/icon-foreground.png
+            cp logo.png assets/icon-background.png
+            cp logo.png assets/splash.png
+            cp logo.png assets/splash-dark.png
+            npx capacitor-assets generate --android
+          fi
+          npx cap sync android
+
+      - name: Build Android APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Awtar-Pharmacy-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
