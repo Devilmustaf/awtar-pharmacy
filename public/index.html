@@ -13,7 +13,23 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
+        /* منع اختيار وتحديد النصوص والنسخ بالكامل */
+        * { 
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE10+/Edge */
+            user-select: none;         /* Standard */
+        }
+        
+        /* السماح بالتحديد فقط في حقول الإدخال */
+        input, textarea {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
         body { font-family: 'Cairo', sans-serif; overflow-x: hidden; }
         .swiper-button-next, .swiper-button-prev {
             color: #0d9488 !important;
@@ -37,7 +53,7 @@
         .animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
-<body class="bg-teal-50/50 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-teal-50/50 text-gray-800 flex flex-col min-h-screen" oncontextmenu="return false;">
 
     <!-- Header / Navbar -->
     <header class="bg-teal-600 text-white shadow-md sticky top-0 z-40">
@@ -59,7 +75,7 @@
             <!-- Actions -->
             <div class="flex items-center gap-1.5 sm:gap-2">
                 <button onclick="switchTab('shop')" class="hover:bg-teal-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-bold flex items-center gap-1">
-                    <img src="logo.png" alt="logo" class="h-6 w-6 ml-2 rounded-full inline-block"> <span class="hidden sm:inline">المتجر</span>
+                    <img src="logo.png" alt="logo" class="h-6 w-6 ml-2 rounded-full inline-block" onerror="this.style.display='none'"> <span class="hidden sm:inline">المتجر</span>
                 </button>
                 <button onclick="openAdminAuthModal()" class="hover:bg-teal-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-bold flex items-center gap-1">
                     <i class="fa-solid fa-user-lock"></i> <span id="admin-btn-text" class="hidden sm:inline">الأدمن</span>
@@ -324,14 +340,71 @@
     <footer class="bg-teal-900 text-white mt-8 py-4 border-t border-teal-800 text-center">
         <div class="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm">
             <p class="font-semibold text-teal-100">
-                صمم بعناية من قبل <span class="font-extrabold text-white">مصطفى نادر</span> &copy; 2026
+                صمم بعناية من قبل <span class="font-extrabold text-white">مصطفى نادر</span> للتواصل 
+                <a href="https://t.me/TSW_007" target="_blank" class="text-amber-400 hover:underline font-bold font-mono">TSW_007@</a> لكَرام &copy; 2026
             </p>
-            <p class="text-teal-200 font-mono flex items-center justify-center gap-1.5 dir-ltr">
-                <i class="fa-solid fa-phone text-amber-400"></i>
-                <a href="tel:07832270700" class="hover:underline hover:text-white transition">07832270700</a>
-            </p>
+            <div class="flex items-center gap-4">
+                <button onclick="openPrivacyModal()" class="text-xs text-teal-200 hover:text-white underline">
+                    سياسة الخصوصية
+                </button>
+            </div>
         </div>
     </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-5 space-y-4 relative max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-extrabold text-teal-800 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> سياسة الخصوصية
+                </h3>
+                <!-- زر العودة للواجهة الرئيسي -->
+                <button onclick="closePrivacyModal()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition shadow">
+                    <i class="fa-solid fa-arrow-right"></i> العودة للواجهة
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto space-y-3 text-xs text-gray-700 leading-relaxed pr-1">
+                <p class="font-bold text-gray-900">أهلاً بكم في تطبيق صيدلية اوتار.</p>
+                <p>نحن نولي أهمية بالغة لخصوصية بياناتك ومعلوماتك الشخصية. توضح هذه السياسة طبيعة البيانات التي نجمعها وكيفية التعامل معها:</p>
+                
+                <h4 class="font-bold text-teal-700 mt-2">1. المعلومات التي نجمعها:</h4>
+                <p>عند إجراء طلب عبر التطبيق، نطلب معلومات أساسية مثل (الاسم الكامل، رقم الهاتف، والعنوان التفصيلي) لضمان إيصال الطلب بشكل صحيح.</p>
+                
+                <h4 class="font-bold text-teal-700 mt-2">2. كيفية استخدام البيانات:</h4>
+                <p>تُستخدم البيانات فقط لغرض معالجة الطلبات وتوصيل المنتجات ولا يتم مشاركتها أو بيعها لأي أطراف خارجية إطلاقاً.</p>
+                
+                <h4 class="font-bold text-teal-700 mt-2">3. حماية البيانات:</h4>
+                <p>يتم حفظ ومعالجة طلباتكم بأمان باستخدام شبكات وقواعد بيانات سحابية مشفرة ومؤمنة (Firebase).</p>
+            </div>
+
+            <div class="border-t pt-3 text-left">
+                <button onclick="closePrivacyModal()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-xl transition text-xs">
+                    العودة إلى الواجهة الرئيسة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div id="exit-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-5 space-y-4 text-center relative">
+            <div class="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+            <h3 class="text-base font-bold text-gray-800">تأكيد الخروج</h3>
+            <p class="text-xs text-gray-600">هل تود الخروج من التطبيق؟</p>
+            
+            <div class="flex gap-2 pt-2">
+                <button onclick="confirmExit()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-xl transition text-xs">
+                    نعم
+                </button>
+                <button onclick="closeExitModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 rounded-xl transition text-xs">
+                    لا
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Medicine Detail / Indications Modal -->
     <div id="med-detail-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
@@ -541,6 +614,40 @@
         let isAdminLoggedIn = sessionStorage.getItem('awtar_admin_logged') === 'true';
         let currentUploadedImageBase64 = "";
         let swiperInstance = null;
+
+        // --- التعامل مع منع الخروج وتأكيد الإغلاق ---
+        window.addEventListener('load', () => {
+            history.pushState({ page: 1 }, "", "");
+        });
+
+        window.addEventListener('popstate', (event) => {
+            // عند محاولة العودة أو الخروج من التطبيق
+            history.pushState({ page: 1 }, "", "");
+            openExitModal();
+        });
+
+        function openExitModal() {
+            document.getElementById('exit-modal').classList.remove('hidden');
+        }
+
+        function closeExitModal() {
+            document.getElementById('exit-modal').classList.add('hidden');
+        }
+
+        function confirmExit() {
+            closeExitModal();
+            // الخروج أو العودة للصفحة السابقة الحقيقية
+            window.history.go(-2);
+        }
+
+        // --- سياسة الخصوصية ---
+        function openPrivacyModal() {
+            document.getElementById('privacy-modal').classList.remove('hidden');
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacy-modal').classList.add('hidden');
+        }
 
         function formatIQD(amount) {
             return new Intl.NumberFormat('ar-IQ').format(amount) + ' د.ع';
@@ -1277,10 +1384,5 @@
         // Init
         renderShop();
     </script>
-    <div class="text-center py-6 border-t mt-8">
-    <a href="privacy.html" class="text-xs text-gray-500 hover:text-teal-600 underline">
-        سياسة الخصوصية
-    </a>
-</div>
 </body>
 </html>
