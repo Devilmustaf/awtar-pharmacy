@@ -13,16 +13,14 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        /* منع اختيار وتحديد النصوص والنسخ بالكامل */
         * { 
             -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none;    /* Firefox */
-            -ms-user-select: none;     /* IE10+/Edge */
-            user-select: none;         /* Standard */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
-        /* السماح بالتحديد فقط في حقول الإدخال */
         input, textarea {
             -webkit-user-select: text !important;
             -moz-user-select: text !important;
@@ -77,9 +75,14 @@
                 <button onclick="switchTab('shop')" class="hover:bg-teal-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-bold flex items-center gap-1">
                     <img src="logo.png" alt="logo" class="h-6 w-6 ml-2 rounded-full inline-block" onerror="this.style.display='none'"> <span class="hidden sm:inline">المتجر</span>
                 </button>
-                <button onclick="openAdminAuthModal()" class="hover:bg-teal-700 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-user-lock"></i> <span id="admin-btn-text" class="hidden sm:inline">الأدمن</span>
-                </button>
+                
+                <!-- User Auth Profile Button -->
+                <div id="user-auth-area">
+                    <button id="auth-btn" onclick="openAuthModal()" class="bg-amber-400 hover:bg-amber-500 text-teal-950 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-extrabold flex items-center gap-1 shadow">
+                        <i class="fa-solid fa-user"></i> <span id="auth-btn-label">تسجيل الدخول</span>
+                    </button>
+                </div>
+
                 <button onclick="toggleCart()" class="relative bg-teal-700 hover:bg-teal-800 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg transition">
                     <i class="fa-solid fa-cart-shopping text-sm sm:text-base"></i>
                     <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center border-2 border-teal-600">0</span>
@@ -97,11 +100,8 @@
             <!-- Hero Banner -->
             <section class="bg-gradient-to-r from-teal-800 to-teal-600 text-white rounded-2xl p-4 sm:p-6 shadow-lg text-center relative overflow-hidden">
                 <div class="relative z-10 max-w-2xl mx-auto space-y-2">
-                    <!-- اهلا وسهلا بخط واسع -->
                     <h2 class="text-2xl sm:text-3xl font-black tracking-wide leading-tight">مرحبا بكم في صيدلية اوتار</h2>
-                    <!-- صحتك وجمالك بخط متوسط -->
-                    <p class="text-sm sm:text-base font-semibold text-teal-50">صحتك وجمالك بأيدٍ أمينة
-                    ونرحب بكم طول أيام الأسبوع</p>
+                    <p class="text-sm sm:text-base font-semibold text-teal-50">صحتك وجمالك بأيدٍ أمينة ونرحب بكم طول أيام الأسبوع</p>
                     
                     <!-- Smart Search Bar -->
                     <div class="flex flex-col sm:flex-row gap-2 pt-3">
@@ -130,12 +130,9 @@
                     </h3>
                 </div>
                 
-                <!-- Swiper Container -->
                 <div id="slider-wrapper">
                     <div class="swiper mySwiper py-1">
-                        <div id="slider-content" class="swiper-wrapper">
-                            <!-- Dynamic Mini Slides -->
-                        </div>
+                        <div id="slider-content" class="swiper-wrapper"></div>
                         <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div>
                         <div class="swiper-pagination"></div>
@@ -156,7 +153,6 @@
                 </div>
                 
                 <div id="all-medicines-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- Skeletons showing immediately on first load -->
                     <div class="bg-white rounded-xl p-3 border space-y-3 animate-pulse">
                         <div class="bg-gray-200 h-36 rounded-lg"></div>
                         <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -183,16 +179,15 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-extrabold text-gray-800 flex items-center gap-2">
-                        <i class="fa-solid fa-user-shield text-teal-600"></i> لوحة التحكم
+                        <i class="fa-solid fa-user-shield text-teal-600"></i> لوحة التحكم (الأدمن)
                     </h2>
                     <p class="text-xs text-gray-500 mt-0.5">إدارة الأدوية والأسعار واستقبال الطلبات</p>
                 </div>
-                <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200 transition self-start sm:self-auto">
+                <button onclick="logoutUser()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-200 transition self-start sm:self-auto">
                     <i class="fa-solid fa-right-from-bracket ml-1"></i> تسجيل الخروج
                 </button>
             </div>
 
-            <!-- Admin Sub-Navigation -->
             <div class="flex gap-2 border-b overflow-x-auto pb-1 text-xs sm:text-sm">
                 <button id="btn-tab-add" onclick="switchAdminSubTab('add')" class="pb-2 px-3 whitespace-nowrap font-bold border-b-2 border-teal-600 text-teal-600 transition">
                     <i class="fa-solid fa-plus-circle ml-1"></i> إضافة / تعديل
@@ -231,7 +226,6 @@
                         </div>
                     </div>
 
-                    <!-- Barcode & Stock Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-bold mb-1 text-gray-700"><i class="fa-solid fa-barcode text-teal-600 ml-1"></i> رمز الباركود (اختياري)</label>
@@ -239,11 +233,10 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold mb-1 text-gray-700">الكمية المتوفرة بالمخزون <span class="text-red-500">*</span></label>
-                            <input type="number" id="med-stock" min="0" required placeholder="مثال: 10 (ضع 0 للتوضيح بأن المنتج نافذ)" class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                            <input type="number" id="med-stock" min="0" required placeholder="مثال: 10" class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none">
                         </div>
                     </div>
 
-                    <!-- Price Options Grid -->
                     <div class="bg-teal-50/50 p-3 rounded-xl border border-teal-100 space-y-2">
                         <p class="text-xs font-bold text-teal-800"><i class="fa-solid fa-tags ml-1"></i> تحديد الأسعار (بالدينار العراقي):</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -253,7 +246,7 @@
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold mb-1 text-gray-700">سعر الشريط الواحد (اختياري)</label>
-                                <input type="number" id="med-price-strip" min="0" step="any" placeholder="مثال: 1500 (اتركه فارغاً إن لم يتوفر)" class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white">
+                                <input type="number" id="med-price-strip" min="0" step="any" placeholder="مثال: 1500" class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white">
                             </div>
                         </div>
                     </div>
@@ -265,10 +258,9 @@
 
                     <div>
                         <label class="block text-xs font-bold mb-1 text-gray-700">دواعي الاستعمال / طريقة الاستخدام</label>
-                        <textarea id="med-desc" rows="3" placeholder="أدخل دواعي الاستعمال والتفاصيل الدوائية الموضحة للزبون..." class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
+                        <textarea id="med-desc" rows="3" placeholder="أدخل دواعي الاستعمال والتفاصيل الدوائية..." class="w-full border rounded-lg p-2 text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
                     </div>
 
-                    <!-- Image Preview -->
                     <div id="image-preview-container" class="hidden">
                         <p class="text-xs font-bold text-gray-600 mb-1">معاينة الصورة:</p>
                         <img id="image-preview" class="h-24 w-24 object-cover rounded-lg border">
@@ -301,9 +293,7 @@
                                 <th class="p-2.5 text-center">إجراءات</th>
                             </tr>
                         </thead>
-                        <tbody id="inventory-table-body" class="divide-y text-xs">
-                            <!-- Dynamic Render -->
-                        </tbody>
+                        <tbody id="inventory-table-body" class="divide-y text-xs"></tbody>
                     </table>
                 </div>
             </div>
@@ -325,9 +315,7 @@
                                 <th class="p-2.5 text-center">تحديث</th>
                             </tr>
                         </thead>
-                        <tbody id="orders-table-body" class="divide-y text-xs">
-                            <!-- Dynamic Render -->
-                        </tbody>
+                        <tbody id="orders-table-body" class="divide-y text-xs"></tbody>
                     </table>
                 </div>
             </div>
@@ -351,6 +339,37 @@
         </div>
     </footer>
 
+    <!-- Universal Login / Register Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 text-center relative">
+            <button onclick="closeAuthModal()" class="absolute top-3 left-3 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-gray-800">التسجيل / تسجيل الدخول</h3>
+                <p class="text-xs text-gray-500 mt-1">أدخل بريدك الإلكتروني وكلمة المرور لتسجيل حسابك والتسوق</p>
+            </div>
+            
+            <form onsubmit="handleUserAuth(event)" class="space-y-3 text-right">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">البريد الإلكتروني / اسم المستخدم</label>
+                    <input type="text" id="user-email-input" required placeholder="مثال: user@example.com" class="w-full border py-2 px-3 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">كلمة المرور</label>
+                    <input type="password" id="user-password-input" required placeholder="••••••••" class="w-full border py-2 px-3 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+
+                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl transition text-xs sm:text-sm shadow mt-2">
+                    دخول / تسجيل الحساب
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Privacy Policy Modal -->
     <div id="privacy-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-5 space-y-4 relative max-h-[85vh] flex flex-col">
@@ -358,7 +377,6 @@
                 <h3 class="text-base font-extrabold text-teal-800 flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved"></i> سياسة الخصوصية
                 </h3>
-                <!-- زر العودة للواجهة الرئيسي -->
                 <button onclick="closePrivacyModal()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition shadow">
                     <i class="fa-solid fa-arrow-right"></i> العودة للواجهة
                 </button>
@@ -413,31 +431,7 @@
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
-            <div id="detail-modal-body" class="overflow-y-auto p-4 space-y-4">
-                <!-- Dynamic Modal Content -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Authentication Modal -->
-    <div id="admin-auth-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-5 space-y-3 text-center relative">
-            <button onclick="closeAdminAuthModal()" class="absolute top-3 left-3 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="w-10 h-10 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto text-lg">
-                <i class="fa-solid fa-key"></i>
-            </div>
-            <h3 class="text-base font-bold text-gray-800">دخول الأدمن</h3>
-            
-            <div>
-                <input type="password" id="admin-pin-input" placeholder="الرمز السري" class="w-full border text-center text-base tracking-widest font-mono py-2 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none">
-                <p id="pin-error" class="text-xs text-red-500 mt-1 hidden">الرمز غير صحيح!</p>
-            </div>
-
-            <button onclick="verifyAdminPin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-xl transition text-xs sm:text-sm">
-                دخول
-            </button>
+            <div id="detail-modal-body" class="overflow-y-auto p-4 space-y-4"></div>
         </div>
     </div>
 
@@ -445,7 +439,6 @@
     <div id="cart-drawer" class="fixed inset-0 bg-black/50 z-50 hidden flex justify-end transition-opacity">
         <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col p-4 space-y-3">
             
-            <!-- Cart Header -->
             <div class="flex justify-between items-center border-b pb-2.5">
                 <h3 class="text-base font-bold flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-teal-600"></i> سلة الشراء</h3>
                 <div class="flex items-center gap-3">
@@ -456,19 +449,14 @@
                 </div>
             </div>
 
-            <!-- Cart Items List -->
-            <div id="cart-items-container" class="flex-grow overflow-y-auto space-y-2.5 pr-1">
-                <!-- Dynamic Render -->
-            </div>
+            <div id="cart-items-container" class="flex-grow overflow-y-auto space-y-2.5 pr-1"></div>
 
-            <!-- Cart Footer -->
             <div class="border-t pt-3 space-y-2.5">
                 <div class="flex justify-between text-sm sm:text-base font-bold">
                     <span>المجموع الكلي:</span>
                     <span id="cart-total" class="text-teal-600">0 د.ع</span>
                 </div>
 
-                <!-- Customer Info -->
                 <div class="space-y-2 pt-2 border-t">
                     <input type="text" id="cust-name" placeholder="الاسم الكامل للزبون" class="w-full border p-2 text-xs rounded-lg outline-none focus:border-teal-500">
                     <input type="tel" id="cust-phone" placeholder="رقم الهاتف (مثال: 0770xxxxxxx)" class="w-full border p-2 text-xs rounded-lg outline-none focus:border-teal-500">
@@ -511,7 +499,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Instant Cache Load (0 seconds delay)
         const cachedMeds = localStorage.getItem('awtar_cached_medicines');
         if (cachedMeds) {
             try {
@@ -522,7 +509,6 @@
             }
         }
 
-        // Products Realtime Listener
         const productsCol = collection(db, "products");
         onSnapshot(productsCol, (snapshot) => {
             window.medicines = [];
@@ -530,7 +516,6 @@
                 window.medicines.push({ id: docItem.id, ...docItem.data() });
             });
             
-            // Update local cache
             localStorage.setItem('awtar_cached_medicines', JSON.stringify(window.medicines));
 
             window.renderShop();
@@ -539,7 +524,6 @@
             }
         });
 
-        // Orders Realtime Listener
         const ordersCol = collection(db, "orders");
         onSnapshot(ordersCol, (snapshot) => {
             window.orders = [];
@@ -551,7 +535,6 @@
             }
         });
 
-        // Database Methods
         window.saveMedicineToFirebase = async function(medData, editId) {
             try {
                 if (editId) {
@@ -606,22 +589,22 @@
 
     <!-- Main Logic Script -->
     <script>
-        const PIN_CODE = "723778";
+        const ADMIN_USER = "dr.mustafa";
+        const ADMIN_PASS = "723778723778";
 
         window.medicines = window.medicines || [];
         window.orders = [];
         let cart = JSON.parse(localStorage.getItem('awtar_cart')) || [];
-        let isAdminLoggedIn = sessionStorage.getItem('awtar_admin_logged') === 'true';
+        let currentUser = JSON.parse(localStorage.getItem('awtar_user_session')) || null;
         let currentUploadedImageBase64 = "";
         let swiperInstance = null;
 
-        // --- التعامل مع منع الخروج وتأكيد الإغلاق ---
         window.addEventListener('load', () => {
             history.pushState({ page: 1 }, "", "");
+            updateAuthUI();
         });
 
         window.addEventListener('popstate', (event) => {
-            // عند محاولة العودة أو الخروج من التطبيق
             history.pushState({ page: 1 }, "", "");
             openExitModal();
         });
@@ -636,11 +619,9 @@
 
         function confirmExit() {
             closeExitModal();
-            // الخروج أو العودة للصفحة السابقة الحقيقية
             window.history.go(-2);
         }
 
-        // --- سياسة الخصوصية ---
         function openPrivacyModal() {
             document.getElementById('privacy-modal').classList.remove('hidden');
         }
@@ -657,9 +638,87 @@
             localStorage.setItem('awtar_cart', JSON.stringify(cart));
         }
 
+        function openAuthModal() {
+            if (currentUser) {
+                if (currentUser.isAdmin) {
+                    switchTab('admin');
+                } else {
+                    if (confirm(`أنت مسجل حالياً باسم (${currentUser.email}). هل تود تسجيل الخروج؟`)) {
+                        logoutUser();
+                    }
+                }
+            } else {
+                document.getElementById('auth-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function handleUserAuth(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('user-email-input').value.trim();
+            const passwordInput = document.getElementById('user-password-input').value.trim();
+
+            if (!emailInput || !passwordInput) {
+                alert('يرجى كتابة البريد وكلمة المرور كاملاً');
+                return;
+            }
+
+            // Check if secret admin credentials
+            if (emailInput === ADMIN_USER && passwordInput === ADMIN_PASS) {
+                currentUser = {
+                    email: ADMIN_USER,
+                    isAdmin: true
+                };
+                localStorage.setItem('awtar_user_session', JSON.stringify(currentUser));
+                closeAuthModal();
+                updateAuthUI();
+                switchTab('admin');
+                alert('مرحباً بك دكتور مصطفى! تم تسجيل دخول الأدمن بنجاح.');
+            } else {
+                // Normal User Auto Register / Login
+                currentUser = {
+                    email: emailInput,
+                    isAdmin: false
+                };
+                localStorage.setItem('awtar_user_session', JSON.stringify(currentUser));
+                closeAuthModal();
+                updateAuthUI();
+                switchTab('shop');
+                alert('تم تسـجيل دخولك بنجاح! يمكنك الآن التصفح وإجراء الشراء.');
+            }
+        }
+
+        function updateAuthUI() {
+            const btnLabel = document.getElementById('auth-btn-label');
+            const authBtn = document.getElementById('auth-btn');
+
+            if (currentUser) {
+                if (currentUser.isAdmin) {
+                    btnLabel.innerText = "لوحة الأدمن";
+                    authBtn.className = "bg-amber-400 hover:bg-amber-500 text-teal-950 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-extrabold flex items-center gap-1 shadow";
+                } else {
+                    btnLabel.innerText = currentUser.email.split('@')[0];
+                    authBtn.className = "bg-teal-700 hover:bg-teal-800 text-white px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-bold flex items-center gap-1 shadow";
+                }
+            } else {
+                btnLabel.innerText = "تسجيل الدخول";
+                authBtn.className = "bg-amber-400 hover:bg-amber-500 text-teal-950 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition text-xs sm:text-sm font-extrabold flex items-center gap-1 shadow";
+            }
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('awtar_user_session');
+            updateAuthUI();
+            switchTab('shop');
+        }
+
         function switchTab(tab) {
-            if (tab === 'admin' && !isAdminLoggedIn) {
-                openAdminAuthModal();
+            if (tab === 'admin' && (!currentUser || !currentUser.isAdmin)) {
+                switchTab('shop');
                 return;
             }
             document.getElementById('page-shop').classList.toggle('hidden', tab !== 'shop');
@@ -684,43 +743,6 @@
             if (subTab === 'orders') renderOrdersTable();
         }
 
-        // Admin Modals
-        function openAdminAuthModal() {
-            if (isAdminLoggedIn) {
-                switchTab('admin');
-            } else {
-                document.getElementById('admin-auth-modal').classList.remove('hidden');
-                document.getElementById('admin-pin-input').focus();
-            }
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('admin-auth-modal').classList.add('hidden');
-            document.getElementById('pin-error').classList.add('hidden');
-            document.getElementById('admin-pin-input').value = '';
-        }
-
-        function verifyAdminPin() {
-            const input = document.getElementById('admin-pin-input').value.trim();
-            if (input === PIN_CODE) {
-                isAdminLoggedIn = true;
-                sessionStorage.setItem('awtar_admin_logged', 'true');
-                closeAdminAuthModal();
-                document.getElementById('admin-btn-text').innerText = 'الأدمن (مفعل)';
-                switchTab('admin');
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-            }
-        }
-
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            sessionStorage.removeItem('awtar_admin_logged');
-            document.getElementById('admin-btn-text').innerText = 'الأدمن';
-            switchTab('shop');
-        }
-
-        // Image Handling
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -734,7 +756,6 @@
             }
         }
 
-        // Form Submit
         async function handleFormSubmit(e) {
             e.preventDefault();
 
@@ -818,7 +839,6 @@
             }
         }
 
-        // Render Shop View
         function renderShop() {
             renderNewlyAddedSlider();
             filterMedicines();
@@ -866,7 +886,6 @@
             });
         }
 
-        // Mini Card Component for "Newly Added" Section
         function createMiniMedCard(med) {
             const packPrice = med.pricePack || med.price || 0;
             const isOutOfStock = med.stock !== undefined && med.stock <= 0;
@@ -930,7 +949,6 @@
             }
         }
 
-        // Standard Full Card Component for Main Grid
         function createMedCard(med) {
             const packPrice = med.pricePack || med.price || 0;
             const hasStrip = med.priceStrip && med.priceStrip > 0;
@@ -958,7 +976,6 @@
                         <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1">${med.desc || 'اضغط لمشاهدة التفاصيل ودواعي الاستعمال'}</p>
                     </div>
 
-                    <!-- Type Selector (Pack / Strip) -->
                     <div class="space-y-1.5 pt-1">
                         ${hasStrip ? `
                             <div class="flex gap-1 text-[10px]">
@@ -1010,7 +1027,6 @@
             }
         }
 
-        // Details Modal
         function openMedDetailModal(id) {
             const med = window.medicines.find(m => m.id === id);
             if (!med) return;
@@ -1042,7 +1058,6 @@
                         <p class="text-xs text-gray-600 leading-relaxed whitespace-pre-line">${med.desc || 'لا توجد تفاصيل إضافية مكتوبة.'}</p>
                     </div>
 
-                    <!-- Options in modal -->
                     <div class="pt-2 border-t space-y-3">
                         <div class="flex justify-between items-center text-xs font-bold">
                             <span>الخيارات المتاحة:</span>
@@ -1168,7 +1183,6 @@
             updateCartUI();
         }
 
-        // Cart Actions
         function toggleCart() {
             document.getElementById('cart-drawer').classList.toggle('hidden');
         }
@@ -1275,7 +1289,6 @@
             document.getElementById('cust-address').value = '';
         }
 
-        // Admin Views Render
         function renderAdminViews() {
             renderInventoryTable();
             renderOrdersTable();
@@ -1303,7 +1316,7 @@
                     <td class="p-2"><img src="${med.image || 'https://via.placeholder.com/150'}" class="w-8 h-8 rounded object-cover border"></td>
                     <td class="p-2 font-bold text-gray-800">${med.name}</td>
                     <td class="p-2 font-mono text-[11px] text-gray-600">${med.barcode || '-'}</td>
-                    <td class="p-2"><span class="bg-gray-100 text-gray-700 text-[10px] px-1.5 py-0.5 rounded">${med.category}</span></td>
+                    <td class="p-2"><span class="bg-gray-100 text-gray-700 text-[10px] px-1.5 py-0.2 rounded">${med.category}</span></td>
                     <td class="p-2">
                         <span class="font-bold text-xs ${stockVal <= 0 ? 'text-red-600' : 'text-gray-800'}">
                             ${stockVal <= 0 ? 'نافذ (0)' : stockVal}
@@ -1381,7 +1394,6 @@
             window.updateOrderStatusInFirebase(orderId, newStatus);
         }
 
-        // Init
         renderShop();
     </script>
 </body>
